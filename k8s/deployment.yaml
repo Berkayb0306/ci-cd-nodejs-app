@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nodejs-app
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -19,18 +20,18 @@ spec:
         - containerPort: 8080
         env:
         - name: DB_HOST
-          value: mysql # Veritabanı servisi adı
+          value: mysql
         - name: DB_USER
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: MYSQL_USER # Secret'dan kullanıcı adı al
+              key: MYSQL_USER
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: MYSQL_PASSWORD # Secret'dan şifre al
+              key: MYSQL_PASSWORD
         - name: DB_NAME
-          value: mydb # Veritabanı adı eklendi
+          value: mydb
       imagePullSecrets:
       - name: regcred
