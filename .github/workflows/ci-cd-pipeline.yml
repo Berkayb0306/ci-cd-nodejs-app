@@ -36,23 +36,11 @@ jobs:
       run: |
         docker push berkayb0306/nodejs-express-mysql-app:latest
 
-    - name: Setup Kubernetes Tools
-      run: |
-        mkdir -p $HOME/.kube
-        touch $HOME/.kube/config
-        chmod 600 $HOME/.kube/config
-
-    - name: Install Kind
+    - name: Create k8s Kind Cluster
       uses: helm/kind-action@v1.8.0
       with:
         config: k8s/kind-cluster.yaml
-        cluster_name: my-cluster
-        install_only: true
-
-    - name: Create Kind Cluster
-      run: |
-        kind create cluster --config k8s/kind-cluster.yaml
-        kind get kubeconfig --name my-cluster > $HOME/.kube/config
+        wait: 120s
 
     - name: Get Cluster Info
       run: |
