@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+      - name: nodejs-app
+        image: berkayb0306/nodejs-express-mysql-app:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: mysql # Veritabanı servisi adı
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_USER # Secret'dan kullanıcı adı al
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_PASSWORD # Secret'dan şifre al
+        - name: DB_NAME
+          value: mydb # Veritabanı adı eklendi
+      imagePullSecrets:
+      - name: regcred

@@ -1,0 +1,77 @@
+# Default values for app-chart.
+replicaCount: 1
+
+image:
+  repository: berkayb0306/nodejs-express-mysql-app
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets:
+  - name: regcred
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+volumes: []
+volumeMounts: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+env:
+  - name: DB_HOST
+    value: "mysql.default.svc.cluster.local"
+  - name: DB_USER
+    valueFrom:
+      secretKeyRef:
+        name: mysql-secret
+        key: MYSQL_USER
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-secret
+        key: MYSQL_PASSWORD
+  - name: DB_NAME
+    value: "mydb"
