@@ -41,17 +41,11 @@ jobs:
       with:
         version: 'latest'
 
-    - name: Install Kind
-      run: |
-        curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
-        chmod +x ./kind
-        sudo mv ./kind /usr/local/bin/kind
-
-    - name: Create Kind Cluster
+    - name: Setup kubeconfig
       run: |
         mkdir -p $HOME/.kube
-        kind create cluster --config k8s/kind-cluster.yaml
-        kind get kubeconfig > $HOME/.kube/config
+        echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
 
     - name: Get Cluster Info
       run: |
