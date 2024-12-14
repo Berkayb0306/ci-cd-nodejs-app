@@ -1,16 +1,17 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+name: my-cluster
 nodes:
   - role: control-plane
     extraPortMappings:
-      - containerPort: 80   # Host'tan erişim için 80 numaralı porta yönlendirme
+      - containerPort: 80
         hostPort: 80
         protocol: TCP
-      - containerPort: 443  # Host'tan erişim için 443 numaralı porta yönlendirme
+      - containerPort: 443
         hostPort: 443
         protocol: TCP
   - role: worker
   - role: worker
 networking:
   disableDefaultCNI: false
-  podSubnet: "10.244.0.0/16"  # Flannel veya başka bir CNI kullanımı için
+  podSubnet: "10.244.0.0/16"
