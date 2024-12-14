@@ -6,7 +6,8 @@ spec:
   selector:
     matchLabels:
       app: mysql
-  replicas: 1
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -14,10 +15,13 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql:5.7
-        ports:
-        - containerPort: 3306
+        image: mysql:8.0
         env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_ROOT_PASSWORD
         - name: MYSQL_DATABASE
           valueFrom:
             configMapKeyRef:
@@ -25,23 +29,21 @@ spec:
               key: MYSQL_DATABASE
         - name: MYSQL_USER
           valueFrom:
-            configMapKeyRef:
-              name: mysql-config
+            secretKeyRef:
+              name: mysql-secret
               key: MYSQL_USER
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-secret
               key: MYSQL_PASSWORD
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: MYSQL_PASSWORD
+        ports:
+        - containerPort: 3306
+          name: mysql
         volumeMounts:
-        - name: mysql-storage
+        - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
       volumes:
-      - name: mysql-storage
+      - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pvc

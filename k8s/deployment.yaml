@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nodejs-app
-  namespace: default
 spec:
   replicas: 1
   selector:
@@ -17,7 +16,7 @@ spec:
       - name: nodejs-app
         image: berkayb0306/nodejs-express-mysql-app:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
         env:
         - name: DB_HOST
           value: mysql
