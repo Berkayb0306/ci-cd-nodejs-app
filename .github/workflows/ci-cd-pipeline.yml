@@ -41,9 +41,9 @@ jobs:
       with:
         cluster_name: "berkay-project"
         node_image: "kindest/node:v1.27.3"
-        config: |-
-          apiVersion: kind.x-k8s.io/v1alpha4
+        config: |
           kind: Cluster
+          apiVersion: kind.x-k8s.io/v1alpha4
           nodes:
           - role: control-plane
           - role: worker
