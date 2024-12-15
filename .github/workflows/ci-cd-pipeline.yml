@@ -44,20 +44,26 @@ jobs:
     - name: Create k8s Kind Cluster
       uses: helm/kind-action@v1.5.0
       with:
-        cluster_name: berkay-project
+        cluster_name: "berkay-project"
+        node_image: "kindest/node:v1.27.3"
+        kind_version: "v0.17.0"
         config: |
-          kind: Cluster
           apiVersion: kind.x-k8s.io/v1alpha4
+          kind: Cluster
           nodes:
-          - role: control-plane
-          - role: worker
-          - role: worker
+            - role: control-plane
+            - role: worker
+            - role: worker
+
+    - name: Create .kube directory
+      run: |
+        sudo mkdir -p /home/runner/.kube
+        sudo chown -R runner:runner /home/runner/.kube
 
     - name: Setup kubeconfig
       run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > $HOME/.kube/config
-        chmod 600 $HOME/.kube/config
+        echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > /home/runner/.kube/config
+        chmod 600 /home/runner/.kube/config
 
     - name: Get Cluster Info
       run: |
