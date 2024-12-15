@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - staging
+  workflow_dispatch:
 
 jobs:
   build:
@@ -75,3 +76,13 @@ jobs:
         kubectl get pods
         echo "Checking services..."
         kubectl get services
+
+
+    - name: Deploy with ArgoCD
+      run: |
+        argocd app create my-nodejs-app \
+        --repo https://github.com/Berkayb0306/nodejs-express-mysql.git \
+        --path app-chart \
+        --dest-server https://kubernetes.default.svc \
+        --dest-namespace default
+        argocd app sync my-nodejs-app
