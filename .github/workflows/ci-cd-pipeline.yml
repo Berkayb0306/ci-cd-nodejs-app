@@ -47,9 +47,22 @@ jobs:
           networking:
             disableDefaultCNI: false
           nodes:
-          - role: control-plane
-          - role: worker
-          - role: worker
+            - role: control-plane
+              extraPortMappings:
+                - containerPort: 80
+                  hostPort: 80
+                  protocol: TCP
+                - containerPort: 443
+                  hostPort: 443
+                  protocol: TCP
+            - role: worker
+            - role: worker
+
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
 
     - name: Get Cluster Info
       run: |
@@ -59,12 +72,12 @@ jobs:
 
     - name: Deploy to Kubernetes
       run: |
-        kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/mysql-config.yaml
-        kubectl apply -f k8s/mysql-deployment.yaml
-        kubectl apply -f k8s/mysql-pvc.yaml
         kubectl apply -f k8s/mysql-secret.yaml
+        kubectl apply -f k8s/mysql-pvc.yaml
+        kubectl apply -f k8s/mysql-deployment.yaml
         kubectl apply -f k8s/mysql-service.yaml
+        kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
 
     - name: Check Deployment Status
