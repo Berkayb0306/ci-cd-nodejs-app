@@ -44,6 +44,8 @@ jobs:
         config: |
           kind: Cluster
           apiVersion: kind.x-k8s.io/v1alpha4
+          networking:
+            disableDefaultCNI: false
           nodes:
           - role: control-plane
           - role: worker
