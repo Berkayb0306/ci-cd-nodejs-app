@@ -36,12 +36,6 @@ jobs:
       run: |
         docker push berkayb0306/nodejs-express-mysql-app:latest
 
-    - name: Create .kube directory and config
-      run: |
-        mkdir -p $HOME/.kube
-        touch $HOME/.kube/config
-        chmod 600 $HOME/.kube/config
-
     - name: Create k8s Kind Cluster
       uses: helm/kind-action@v1.5.0
       with:
@@ -54,11 +48,6 @@ jobs:
           - role: control-plane
           - role: worker
           - role: worker
-
-    - name: Setup kubeconfig
-      run: |
-        echo "${{ secrets.KUBECONFIG_SECRET }}" | base64 -d > $HOME/.kube/config
-        chmod 600 $HOME/.kube/config
 
     - name: Get Cluster Info
       run: |
