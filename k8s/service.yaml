@@ -6,6 +6,8 @@ spec:
   selector:
     app: nodejs-app
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 8080
       targetPort: 3000
-  type: LoadBalancer
+      nodePort: 30008  # Sabit bir NodePort belirtebilirsiniz
+  type: NodePort
