@@ -2,15 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-config
+  namespace: default
 data:
   MYSQL_DATABASE: mydb
   MYSQL_USER: myuser
-mysql-configmap.yaml
-
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql-config
-data:
-  MYSQL_DATABASE: mydb 
