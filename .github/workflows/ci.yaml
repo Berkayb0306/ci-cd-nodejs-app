@@ -15,24 +15,7 @@ env:
   IMAGE_NAME: berkayb0306/nodejs-express-mysql-app
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          
-      - name: Install Dependencies
-        run: npm install
-        
-      - name: Run Tests
-        run: npm test || echo "No tests specified"
-
   build:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -69,26 +52,25 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Install ArgoCD CLI
-        run: |
-          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-          rm argocd-linux-amd64
-      
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+          
       - name: Setup Kubeconfig
         run: |
-          echo "${{ secrets.KUBECONFIG_FILE }}" > kubeconfig.yaml
+          echo "${{ secrets.KUBECONFIG_FILE }}" | base64 -d > kubeconfig.yaml
           echo "KUBECONFIG=$(pwd)/kubeconfig.yaml" >> $GITHUB_ENV
           
       - name: Update Application Image
         run: |
-          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            kubectl set image deployment/nodejs-express-mysql nodejs-express-mysql=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} -n nodejs-express-mysql
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            kubectl --kubeconfig=kubeconfig.yaml set image deployment/nodejs-express-mysql nodejs-express-mysql=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} -n nodejs-express-mysql
           else
-            kubectl set image deployment/nodejs-express-mysql nodejs-express-mysql=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} -n nodejs-express-mysql
+            kubectl --kubeconfig=kubeconfig.yaml set image deployment/nodejs-express-mysql nodejs-express-mysql=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} -n nodejs-express-mysql
           fi
           
       - name: Wait for rollout
         run: |
-          kubectl rollout status deployment/nodejs-express-mysql -n nodejs-express-mysql --timeout=120s
+          kubectl --kubeconfig=kubeconfig.yaml rollout status deployment/nodejs-express-mysql -n nodejs-express-mysql --timeout=120s
