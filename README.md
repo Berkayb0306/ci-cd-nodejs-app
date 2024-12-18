@@ -4,7 +4,7 @@ Bu proje, Node.js, Express ve MySQL kullanarak oluşturulmuş bir REST API uygul
 
 ## Proje Yapısı
 
-```
+```.
 .
 ├── app/
 │   ├── routes/
