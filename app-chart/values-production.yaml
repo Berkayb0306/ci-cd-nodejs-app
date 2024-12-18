@@ -1,6 +1,11 @@
 environment: production
 replicaCount: 3
 
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
 image:
   repository: berkayb0306/nodejs-express-mysql-app
   tag: latest
@@ -34,11 +39,11 @@ mysql:
     existingSecret: mysql-credentials-prod
   primary:
     persistence:
-      size: 20Gi
+      size: 10Gi
     resources:
       limits:
-        cpu: 2000m
-        memory: 2Gi
-      requests:
         cpu: 1000m
         memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
