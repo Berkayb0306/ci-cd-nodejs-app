@@ -1,0 +1,50 @@
+replicaCount: 3
+environment: production
+
+image:
+  repository: berkayb0306/nodejs-express-mysql-app
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: api.yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: api-tls
+      hosts:
+        - api.yourdomain.com
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+mysql:
+  enabled: true
+  auth:
+    database: mydb_prod
+    username: myuser
+    existingSecret: mysql-credentials
+  primary:
+    persistence:
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi

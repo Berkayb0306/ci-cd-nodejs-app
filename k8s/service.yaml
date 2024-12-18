@@ -2,12 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nodejs-service
+  labels:
+    app.kubernetes.io/instance: nodejs-express-mysql
 spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 31080  # 31000-32767 aralığında bir port kullanmalıyız
+      protocol: TCP
   selector:
     app: nodejs-app
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 3000
-      nodePort: 30008  # Sabit bir NodePort belirtebilirsiniz
-  type: NodePort

@@ -1,0 +1,65 @@
+replicaCount: 1
+
+image:
+  repository: berkayb0306/nodejs-express-mysql-app
+  pullPolicy: Always
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+env:
+  - name: NODE_ENV
+    value: "production"
+  - name: PORT
+    value: "3000"
+  - name: DB_HOST
+    valueFrom:
+      secretKeyRef:
+        name: mysql-credentials
+        key: host
+  - name: DB_USER
+    valueFrom:
+      secretKeyRef:
+        name: mysql-credentials
+        key: username
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-credentials
+        key: password
+  - name: DB_NAME
+    valueFrom:
+      secretKeyRef:
+        name: mysql-credentials
+        key: database
+
+mysql:
+  enabled: true
+  auth:
+    database: mydb
+    username: myuser
+    existingSecret: mysql-credentials
+  primary:
+    persistence:
+      size: 8Gi

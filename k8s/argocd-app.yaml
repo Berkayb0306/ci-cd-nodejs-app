@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nodejs-express-mysql
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://gitlab.com/yourusername/nodejs-express-mysql.git  # GitLab repo URL'nizi buraya yazın
+    targetRevision: HEAD
+    path: helm
+    helm:
+      valueFiles:
+        - values-production.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

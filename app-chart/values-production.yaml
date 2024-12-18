@@ -1,0 +1,44 @@
+environment: production
+replicaCount: 3
+
+image:
+  repository: berkayb0306/nodejs-express-mysql-app
+  tag: latest
+  pullPolicy: Always
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: api.berkayb0306.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: api-tls
+      hosts:
+        - api.berkayb0306.com
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+mysql:
+  enabled: true
+  auth:
+    database: mydb_prod
+    existingSecret: mysql-credentials-prod
+  primary:
+    persistence:
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi

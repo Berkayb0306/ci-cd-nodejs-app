@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nodejs-staging
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/berkayb0306/nodejs-express-mysql.git
+    targetRevision: staging
+    path: app-chart
+    helm:
+      valueFiles:
+        - values-staging.yaml
+      parameters:
+        - name: "image.tag"
+          value: staging
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

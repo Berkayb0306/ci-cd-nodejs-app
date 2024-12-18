@@ -1,0 +1,40 @@
+environment: staging
+replicaCount: 1
+
+image:
+  repository: berkayb0306/nodejs-express-mysql-app
+  tag: staging
+  pullPolicy: Always
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: staging-api.berkayb0306.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+mysql:
+  enabled: true
+  auth:
+    database: mydb_staging
+    existingSecret: mysql-credentials-staging
+  primary:
+    persistence:
+      size: 10Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
