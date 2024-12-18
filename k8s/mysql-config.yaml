@@ -5,4 +5,3 @@ metadata:
   namespace: default
 data:
   MYSQL_DATABASE: mydb
-  MYSQL_USER: myuser
