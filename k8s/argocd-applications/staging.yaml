@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/berkayb0306/nodejs-express-mysql.git
+    repoURL: https://github.com/berkayb0306/ci-cd-nodejs-app.git
     targetRevision: staging
     path: app-chart
     helm:

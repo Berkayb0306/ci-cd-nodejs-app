@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/berkayb0306/nodejs-express-mysql.git  # GitHub repo URL'nizi buraya yazın
+    repoURL: https://github.com/berkayb0306/ci-cd-nodejs-app.git  # GitHub repo URL'nizi buraya yazın
     targetRevision: main
     path: app-chart
     helm:
