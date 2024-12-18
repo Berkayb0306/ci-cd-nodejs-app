@@ -81,19 +81,14 @@ jobs:
           echo "${{ secrets.KUBECONFIG_FILE }}" > kubeconfig.yaml
           echo "KUBECONFIG=$(pwd)/kubeconfig.yaml" >> $GITHUB_ENV
           
-      - name: Login to ArgoCD
-        run: |
-          argocd login $(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}'):30443 \
-            --username admin \
-            --password ${{ secrets.ARGOCD_PASSWORD }} \
-            --insecure
-            
       - name: Update Application Image
         run: |
           if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            argocd app set nodejs-prod --kustomize-image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
-            argocd app sync nodejs-prod --prune
+            kubectl set image deployment/nodejs-express-mysql nodejs-express-mysql=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} -n nodejs-express-mysql
           else
-            argocd app set nodejs-staging --kustomize-image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
-            argocd app sync nodejs-staging --prune
+            kubectl set image deployment/nodejs-express-mysql nodejs-express-mysql=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} -n nodejs-express-mysql
           fi
+          
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/nodejs-express-mysql -n nodejs-express-mysql --timeout=120s
